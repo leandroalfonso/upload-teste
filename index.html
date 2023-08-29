@@ -1,15 +1,45 @@
-<!DOCTYPE html>
+
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload de Imagens</title>
+    <title>Upload de Imagem</title>
 </head>
 <body>
-    <h1>Upload de Imagens</h1>
-    <form action="upload.php" method="POST" enctype="multipart/form-data">
-        <input type="file" name="imagem" accept=".jpg, .png" required placeholder="teste de upload">
+    <h1>Upload de Imagem</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="imagem" accept=".jpg, .png" placeholder="imagens">
         <button type="submit">Enviar</button>
     </form>
+
+    <div id="message"></div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const messageDiv = document.getElementById('message');
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(uploadForm);
+
+            try {
+                const response = await fetch('https://regal-clafoutis-a24a42.netlify.app/api/upload.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    messageDiv.textContent = data.message;
+                } else {
+                    messageDiv.textContent = data.error;
+                }
+            } catch (error) {
+                console.error('Erro ao enviar imagem:', error);
+                messageDiv.textContent = 'Erro ao enviar imagem.';
+            }
+        });
+    </script>
 </body>
 </html>
